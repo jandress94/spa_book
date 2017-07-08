@@ -13,6 +13,7 @@ spa.shell = (function () {
     //----------BEGIN MODULE SCOPE VARIABLES-------------
     var
         configMap = {
+            resize_interval: 200,
             anchor_schema_map : {
                 chat : {opened: true, closed: true}
             },
@@ -30,11 +31,13 @@ spa.shell = (function () {
                             + '<div class="spa-shell-modal"></div>'
         },
         stateMap = {
-            anchor_map: {}
+            $container: undefined,
+            anchor_map: {},
+            resize_idto: undefined
         },
         jqueryMap = {},
 
-        copyAnchorMap, setJqueryMap, changeAnchorPart, onHashChange, setChatAnchor, initModule;
+        copyAnchorMap, setJqueryMap, changeAnchorPart, onHashChange, onResize, setChatAnchor, initModule;
 
     //------------BEGIN UTILITY METHODS---------------
     copyAnchorMap = function () {
@@ -158,16 +161,29 @@ spa.shell = (function () {
 
         // begin revert anchor if slider change denied
         if (!is_ok) {
-          if (anchor_map_previous) {
-            $.uriAnchor.setAnchor(anchor_map_previous, null, true);
-            stateMap.anchor_map = anchor_map_previous;
-          } else {
-            delete anchor_map_proposed.chat;
-            $.uriAnchor.setAnchor(anchor_map_proposed, null, true);
-          }
+            if (anchor_map_previous) {
+                $.uriAnchor.setAnchor(anchor_map_previous, null, true);
+                stateMap.anchor_map = anchor_map_previous;
+            } else {
+                delete anchor_map_proposed.chat;
+                $.uriAnchor.setAnchor(anchor_map_proposed, null, true);
+            }
         }
 
         return false;
+    };
+
+    onResize = function () {
+        if (stateMap.resize_idto) {
+            return true;
+        }
+
+        spa.chat.handleResize();
+        stateMap.resize_idto = setTimeout(
+            function () { stateMap.resize_idto = undefined; },
+            configMap.resize_interval
+        );
+        return true;
     };
 
     //-------------BEGIN CALLBACKS--------------------
@@ -184,7 +200,7 @@ spa.shell = (function () {
      * throws: none
      */
     setChatAnchor = function (position_type) {
-      return changeAnchorPart({ chat: position_type });
+        return changeAnchorPart({ chat: position_type });
     }
 
     //-------------BEGIN PUBLIC METHODS---------------
@@ -210,9 +226,9 @@ spa.shell = (function () {
 
         // configure and initialize feature modules
         spa.chat.configModule({
-          set_chat_anchor: setChatAnchor,
-          chat_model: spa.model.chat,
-          people_model: spa.model.people
+            set_chat_anchor: setChatAnchor,
+            chat_model: spa.model.chat,
+            people_model: spa.model.people
         });
         spa.chat.initModule(jqueryMap.$container);
 
@@ -223,6 +239,7 @@ spa.shell = (function () {
          * is considered on-load
          */
         $(window)
+            .bind('resize', onResize)
             .bind('hashchange', onHashChange)
             .trigger('hashchange');
     };
