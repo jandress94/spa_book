@@ -246,6 +246,10 @@ spa.shell = (function () {
         // configure uriAnchor to use our schema
         $.uriAnchor.configModule({ schema_map: configMap.anchor_schema_map });
 
+        // configure and initialize feature modules
+        spa.chat.configModule({});
+        spa.chat.initModule(jqueryMap.$chat);
+
         /* handle URI anchor change events.
          * this is done after all feature modules are configured
          * and initialized, otherwise the will not be ready to handle
