@@ -98,6 +98,13 @@ spa.fake = (function () {
                     clearTimeout(listchange_idto);
                     listchange_idto = undefined;
                 }
+
+                // added by Jim
+                for (i = 0; i < peopleList.length; i++) {
+                    if (peopleList[i]._id === data.leaving_id) {
+                        peopleList.splice(i, 1);
+                    }
+                }
                 send_listchange();
             }
 
@@ -123,12 +130,12 @@ spa.fake = (function () {
                         dest_id: user.id,
                         dest_name: user.name,
                         sender_id: 'id_04',
-                        msg_text: 'Hi there ' + user.name + '! Spam here.'
+                        msg_text: 'Hi there ' + user.name + '! Spammy Bill here.'
                     }]);
                 } else {
                     emit_mock_msg();
                 }
-            }, 8000);
+            }, 18000);
         };
 
         // try once per second to use listchange callback.  Stop trying after first success.

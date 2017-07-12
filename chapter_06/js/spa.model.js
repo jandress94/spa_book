@@ -132,7 +132,6 @@ spa.model = (function () {
 
         logout = function () {
             var user = stateMap.user;
-            // when we add chat, we should leave the chatroom here
 
             chat._leave();
             stateMap.user = stateMap.anon_user;
@@ -227,7 +226,8 @@ spa.model = (function () {
             chatee = null;
             stateMap.is_connected = false;
             if (sio) {
-                sio.emit('leavechat');
+                // original line: sio.emit('leavechat');
+                sio.emit('leavechat', {leaving_id: stateMap.user.id});
             }
         };
 
