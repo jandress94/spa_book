@@ -140,8 +140,8 @@
 }
 
 .spa-chat-list-name.spa-x-select {
-    background-color: #fff;
     color: #444;
+    font-style: italic;
 }
 
 .spa-chat-msg-in {

@@ -284,6 +284,7 @@ spa.chat = (function () {
     onListchange = function (event) {
         var
             list_html = String(),
+            background_color,
             people_db = configMap.people_model.get_db(),
             chatee = configMap.chat_model.get_chatee();
 
@@ -295,10 +296,16 @@ spa.chat = (function () {
             }
 
             if (chatee && chatee.id === person.id) {
-                select_class = 'spa-x-select';
+                select_class = ' spa-x-select';
             }
+
+            background_color = person.css_map['background-color'] || 'rgb(170, 170, 170)';
+            // if (!background_color) {
+            //     background_color = 
+            // }
+
             list_html
-                += '<div class="spa-chat-list-name' + select_class + '" data-id="' + person.id + '">'
+                += '<div class="spa-chat-list-name' + select_class + '" data-id="' + person.id + '" style="background-color:' + background_color + '">'
                 + spa.util_b.encodeHtml(person.name) + '</div>';
         });
 

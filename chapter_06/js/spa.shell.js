@@ -258,6 +258,12 @@ spa.shell = (function () {
         });
         spa.chat.initModule(jqueryMap.$container);
 
+        spa.avtr.configModule({
+            chat_model: spa.model.chat,
+            people_model: spa.model.people
+        });
+        spa.avtr.initModule(jqueryMap.$nav);
+
         /* handle URI anchor change events.
          * this is done after all feature modules are configured
          * and initialized, otherwise the will not be ready to handle
