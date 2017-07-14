@@ -17,7 +17,7 @@ spa.model = (function () {
         },
         isFakeData = false,
 
-        personProto, makeCid, clearPeopleDb, completeLogin, makePerson, removePerson, people, chat, initModule;
+        personProto, makeCid, clearPeopleDb, completeLogin, showLoginFailure, makePerson, removePerson, people, chat, initModule;
 
     // The people object API (available at spa.model.people)
 
@@ -55,7 +55,14 @@ spa.model = (function () {
         chat.join();
 
         // when we add chat, we should join here
-        $.gevent.publish('spa-login', [stateMap.user]);
+        $.gevent.publish('spa-loginsuccess', [stateMap.user]);
+    };
+
+    showLoginFailure = function (failure_reason) {
+        chat._leave();
+        stateMap.user = stateMap.anon_user;
+        clearPeopleDb();
+        $.gevent.publish('spa-loginfailure', failure_reason[0]);
     };
 
     makePerson = function (person_map) {
@@ -103,6 +110,11 @@ spa.model = (function () {
 
     people = (function () {
         var get_by_cid, get_db, get_user, login, logout;
+
+        (function () {
+            var sio = isFakeData ? spa.fake.mockSio : spa.data.getSio();
+            sio.on('loginfailed', showLoginFailure);
+        }());
 
         get_by_cid = function (cid) {
             return stateMap.people_cid_map[cid];

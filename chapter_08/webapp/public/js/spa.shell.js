@@ -41,7 +41,7 @@ spa.shell = (function () {
         jqueryMap = {},
 
         copyAnchorMap, setJqueryMap, changeAnchorPart, onHashChange, onResize, 
-        onTapAcct, onLogin, onLogout, setChatAnchor, initModule;
+        onTapAcct, onLoginSuccess, onLoginFailure, onLogout, setChatAnchor, initModule;
 
     //------------BEGIN UTILITY METHODS---------------
     copyAnchorMap = function () {
@@ -204,8 +204,13 @@ spa.shell = (function () {
         return false;
     };
 
-    onLogin = function (event, login_user) {
+    onLoginSuccess = function (event, login_user) {
         jqueryMap.$acct.text(login_user.name);
+    };
+
+    onLoginFailure = function (event, failure_reason) {
+        jqueryMap.$acct.text('Please sign-in');
+        alert('Could not login: ' + failure_reason);
     };
 
     onLogout = function (event, logout_user) {
@@ -275,7 +280,8 @@ spa.shell = (function () {
             .bind('hashchange', onHashChange)
             .trigger('hashchange');
 
-        $.gevent.subscribe($container, 'spa-login', onLogin);
+        $.gevent.subscribe($container, 'spa-loginsuccess', onLoginSuccess);
+        $.gevent.subscribe($container, 'spa-loginfailure', onLoginFailure);
         $.gevent.subscribe($container, 'spa-logout', onLogout);
 
         jqueryMap.$acct
